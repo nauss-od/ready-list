@@ -76,40 +76,49 @@ export default function RegisterPage({ onBack }) {
         padding: '48px',
         position: 'relative',
         overflow: 'hidden',
+        background: 'linear-gradient(160deg, #030c0d 0%, #091b1c 40%, #122e2f 75%, #1d4243 100%)',
       }}>
-        {[280, 460, 640].map((sz, i) => (
-          <div key={i} style={{
-            position: 'absolute',
-            width: sz, height: sz,
-            border: `1px solid rgba(199,176,140,${0.07 - i * 0.018})`,
-            borderRadius: '50%',
-            top: '50%', left: '50%',
-            transform: 'translate(-50%,-50%)',
-            pointerEvents: 'none',
-          }} />
-        ))}
+        {/* Geometric tile pattern */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Crect x='17' y='17' width='22' height='22' fill='none' stroke='%23C7B08C' stroke-width='0.5' transform='rotate(0 28 28)'/%3E%3Crect x='17' y='17' width='22' height='22' fill='none' stroke='%23C7B08C' stroke-width='0.5' transform='rotate(45 28 28)'/%3E%3C/svg%3E")`,
+          backgroundSize: '56px 56px', opacity: 0.04, pointerEvents: 'none',
+        }} />
+        {/* Gold lines top/bottom */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(199,176,140,0.5), transparent)' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(199,176,140,0.4), transparent)' }} />
         <div style={{ position: 'relative', textAlign: 'center' }}>
-          {/* Logo in white container */}
+          {/* Large geometric star — same treatment as LoginPage */}
           <div style={{
-            background: 'white',
-            borderRadius: '14px',
-            padding: '14px 24px',
-            display: 'inline-flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+            display: 'flex', justifyContent: 'center', marginBottom: '28px',
+            filter: 'drop-shadow(0 0 32px rgba(199,176,140,0.1))',
           }}>
-            <NaissLogo size={200} />
+            <svg viewBox="0 0 200 200" width={200} height={200} fill="none">
+              <circle cx="100" cy="100" r="96" stroke="rgba(199,176,140,0.08)" strokeWidth="1"/>
+              <circle cx="100" cy="100" r="80" stroke="rgba(199,176,140,0.1)" strokeWidth="0.8"/>
+              <polygon
+                points="100,10 114,65 164,36 135,86 190,100 135,114 164,164 114,135 100,190 86,135 36,164 65,114 10,100 65,86 36,36 86,65"
+                fill="rgba(199,176,140,0.055)" stroke="rgba(199,176,140,0.28)" strokeWidth="1.2" strokeLinejoin="round"
+              />
+              <rect x="60" y="60" width="80" height="80" stroke="rgba(199,176,140,0.16)" strokeWidth="1" transform="rotate(0 100 100)"/>
+              <rect x="60" y="60" width="80" height="80" stroke="rgba(199,176,140,0.16)" strokeWidth="1" transform="rotate(45 100 100)"/>
+              <circle cx="100" cy="100" r="4.5" fill="rgba(199,176,140,0.35)"/>
+              <circle cx="100" cy="100" r="2" fill="rgba(199,176,140,0.7)"/>
+            </svg>
           </div>
 
-          <div style={{
-            marginTop: '36px',
-            padding: '14px 28px',
-            borderRadius: '12px',
-            background: 'rgba(199,176,140,0.08)',
-            border: '1px solid rgba(199,176,140,0.18)',
-          }}>
-            <div style={{ color: 'white', fontSize: '15px', fontWeight: '800' }}>منصة جاهزية المشاركين</div>
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ flex: 1, height: '1px', background: 'rgba(199,176,140,0.2)' }} />
+            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'rgba(199,176,140,0.5)' }} />
+            <div style={{ flex: 1, height: '1px', background: 'rgba(199,176,140,0.2)' }} />
+          </div>
+
+          <div style={{ color: 'rgba(255,255,255,0.72)', fontSize: '15px', fontWeight: '700', letterSpacing: '0.4px' }}>
+            منصة جاهزية المشاركين
+          </div>
+          <div style={{ color: 'rgba(199,176,140,0.4)', fontSize: '10px', letterSpacing: '2.5px', marginTop: '7px', fontWeight: '600' }}>
+            PARTICIPANT READINESS PLATFORM
           </div>
         </div>
       </div>
@@ -127,10 +136,19 @@ export default function RegisterPage({ onBack }) {
         overflowY: 'auto',
       }}>
         <div style={{ maxWidth: '400px', width: '100%', margin: '0 auto' }}>
-          <div style={{ marginBottom: '28px' }}>
-            <h1 style={{ fontSize: '24px', fontWeight: '900', color: '#0f172a', lineHeight: 1.2 }}>
+          {/* Logo */}
+          <div style={{
+            display: 'flex', justifyContent: 'center',
+            marginBottom: '24px', paddingBottom: '20px',
+            borderBottom: '1px solid #edf1f7',
+          }}>
+            <NaissLogo size={180} />
+          </div>
+          <div style={{ marginBottom: '24px' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: '900', color: '#0d1a1a', lineHeight: 1.2, letterSpacing: '-0.4px' }}>
               إنشاء حساب جديد
             </h1>
+            <p style={{ fontSize: '13px', color: '#7a9898', marginTop: '5px' }}>أنشئ حسابك للوصول إلى المنصة</p>
           </div>
 
           <form onSubmit={handleSubmit} autoComplete="off" noValidate>

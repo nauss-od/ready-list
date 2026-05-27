@@ -45,16 +45,7 @@ export default function Layout({ children, activeView, onNavigate, topBarContent
       <aside className="sidebar">
 
         <div className="sidebar-logo">
-          <div style={{
-            background: 'white',
-            borderRadius: '10px',
-            padding: '9px 14px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-            <NaissLogo size={168} />
-          </div>
+          <NaissLogo size={158} />
         </div>
 
         <div className="sidebar-platform-badge">

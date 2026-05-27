@@ -168,20 +168,34 @@ function CourseReview({ course, onBack }) {
       </div>
 
       {/* Actions */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
         {course.status === 'approved' && (
-          <button className="btn btn-primary" onClick={() => receiveCourse(course.id)}>
-            📬 تأكيد الاستلام
+          <button
+            className="btn btn-primary"
+            onClick={() => receiveCourse(course.id)}
+            style={{ fontSize: '15px', padding: '13px 26px', fontWeight: '900' }}
+          >
+            📬 تأكيد استلام القائمة
           </button>
         )}
         {['received', 'exported'].includes(course.status) && (
-          <button className="btn btn-gold" onClick={handleExport} disabled={exporting}>
-            {exporting ? <><span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> جارٍ التصدير...</>
+          <button
+            className="btn btn-gold"
+            onClick={handleExport}
+            disabled={exporting}
+            style={{ fontSize: '15px', padding: '13px 26px', fontWeight: '900' }}
+          >
+            {exporting
+              ? <><span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> جارٍ التصدير...</>
               : '📥 تصدير ملف Excel لـ LMS'}
           </button>
         )}
         {course.status === 'exported' && (
-          <button className="btn btn-primary" onClick={() => setShowResult(true)}>
+          <button
+            className="btn btn-primary"
+            onClick={() => setShowResult(true)}
+            style={{ fontSize: '15px', padding: '13px 26px', fontWeight: '900' }}
+          >
             📊 تسجيل نتيجة الرفع على LMS
           </button>
         )}
@@ -190,7 +204,7 @@ function CourseReview({ course, onBack }) {
             {course.lmsUploadResult === 'success' ? '🎓 تم الرفع على LMS بنجاح' : '❌ فشل الرفع على LMS'}
           </div>
         )}
-        {/* Always allow re-export */}
+        {/* Allow re-export */}
         {['exported', 'lms_uploaded'].includes(course.status) && (
           <button className="btn btn-ghost btn-sm" onClick={handleExport}>
             ↩ تصدير مرة أخرى
@@ -327,6 +341,8 @@ function Dashboard({ onNavigate }) {
   const exported = courses.filter(c => c.status === 'exported').length;
   const done     = courses.filter(c => c.status === 'lms_uploaded').length;
 
+  const actionItems = courses.filter(c => ['approved','received','exported'].includes(c.status));
+
   return (
     <div className="animate-up">
       <div className="page-header-row mb-20">
@@ -335,6 +351,80 @@ function Dashboard({ onNavigate }) {
           <p style={{ color: 'var(--text-light)', marginTop: '4px' }}>استلام القوائم المعتمدة وتصديرها إلى منصة LMS</p>
         </div>
       </div>
+
+      {/* Urgent action hero — shown when there are pending items */}
+      {actionItems.length > 0 && (
+        <div style={{
+          background: 'linear-gradient(135deg, #2A6364 0%, #1a3f40 100%)',
+          borderRadius: '16px',
+          padding: '20px 24px',
+          marginBottom: '24px',
+          border: '1px solid rgba(199,176,140,0.2)',
+          boxShadow: '0 8px 28px rgba(42,99,100,0.32)',
+        }}>
+          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', fontWeight: '700', marginBottom: '14px', letterSpacing: '0.5px' }}>
+            ⚡ يحتاج إجراء الآن ({actionItems.length})
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {actionItems.slice(0, 4).map(c => (
+              <div
+                key={c.id}
+                onClick={() => onNavigate('course_' + c.id)}
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '10px',
+                  padding: '14px 18px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  transition: 'all 0.18s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.16)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ fontSize: '22px' }}>
+                    {c.status === 'approved' ? '📬' : c.status === 'received' ? '📥' : '📊'}
+                  </div>
+                  <div>
+                    <div style={{ color: 'white', fontWeight: '800', fontSize: '14px' }}>{c.name}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginTop: '2px' }}>
+                      {c.status === 'approved'  && 'بانتظار تأكيد الاستلام'}
+                      {c.status === 'received'  && 'جاهزة للتصدير إلى LMS'}
+                      {c.status === 'exported'  && 'سجّل نتيجة الرفع على LMS'}
+                    </div>
+                  </div>
+                </div>
+                <div style={{
+                  background: 'rgba(255,255,255,0.18)',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  color: 'white',
+                  fontWeight: '800',
+                  fontSize: '13px',
+                  whiteSpace: 'nowrap',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                }}>
+                  {c.status === 'approved'  && 'استلام ←'}
+                  {c.status === 'received'  && 'تصدير Excel ←'}
+                  {c.status === 'exported'  && 'تسجيل النتيجة ←'}
+                </div>
+              </div>
+            ))}
+          </div>
+          {actionItems.length > 4 && (
+            <button
+              onClick={() => onNavigate('approved')}
+              style={{ marginTop: '12px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '13px', fontFamily: 'Cairo, Tahoma', fontWeight: '700' }}
+            >
+              + {actionItems.length - 4} أخرى — عرض الكل ←
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="stats-grid">
         {[
@@ -353,36 +443,9 @@ function Dashboard({ onNavigate }) {
         ))}
       </div>
 
-      {/* Pending action */}
-      {courses.filter(c => ['approved','received','exported'].includes(c.status)).length > 0 ? (
-        <div className="card">
-          <div className="card-header">
-            <h3>📋 يحتاج إجراء الآن</h3>
-            <button className="btn btn-ghost btn-sm" onClick={() => onNavigate('approved')}>عرض الكل</button>
-          </div>
-          <div className="card-body" style={{ padding: 0 }}>
-            <table className="data-table">
-              <thead><tr><th>الدورة</th><th>تاريخ البدء</th><th>الحالة</th><th>المطلوب</th></tr></thead>
-              <tbody>
-                {courses.filter(c => ['approved','received','exported'].includes(c.status)).map(c => (
-                  <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => onNavigate('course_' + c.id)}>
-                    <td style={{ fontWeight: '700' }}>{c.name}</td>
-                    <td style={{ fontSize: '13px' }}>{fmtD(c.startDate)}</td>
-                    <td><StatusBadge status={c.status} /></td>
-                    <td style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: '600' }}>
-                      {c.status === 'approved'  && '📬 استلام القائمة'}
-                      {c.status === 'received'  && '📥 تصدير ملف Excel'}
-                      {c.status === 'exported'  && '📊 تسجيل نتيجة الرفع'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ) : (
+      {actionItems.length === 0 && (
         <div className="alert alert-success">
-          <span>✅</span>لا توجد مهام معلقة حالياً
+          <span>✅</span>لا توجد مهام معلقة حالياً — كل شيء على ما يرام
         </div>
       )}
     </div>

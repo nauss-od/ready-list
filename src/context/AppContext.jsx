@@ -78,6 +78,9 @@ export function AppProvider({ children }) {
     } catch { return null; }
   });
 
+  // Manager can preview any role without logging out
+  const [viewRole, setViewRole] = useState(null); // null = use actual role
+
   const [users, setUsers] = useState(() => {
     try {
       const saved = localStorage.getItem(USERS_KEY);
@@ -197,6 +200,7 @@ export function AppProvider({ children }) {
       auditLog: [{ action: 'إنشاء النشاط التدريبي', user: ADMIN.name, at: new Date().toISOString() }],
     }]);
     showToast(`تم إنشاء النشاط: ${data.name}`, 'success');
+    return id; // ← return ID so caller can navigate directly to editor
   }, [courses.length, showToast]);
 
   const deleteCourse = useCallback((courseId) => {
@@ -341,6 +345,7 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       currentUser, courses, toasts, users,
+      viewRole, setViewRole,
       login, logout, register, updateUser, deleteUser, createUser,
       createCourse, deleteCourse,
       uploadParticipants, correctParticipant, removeDuplicate, addParticipantsManually,

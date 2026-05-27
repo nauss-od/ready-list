@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 const today = new Date().toISOString().slice(0, 10);
 const empty = { name: '', startDate: '', endDate: '', location: '', capacity: '20', nominationLetter: '' };
 
-export default function CreateCourseModal({ onClose }) {
+export default function CreateCourseModal({ onClose, onCreated }) {
   const { createCourse } = useApp();
   const [form, setForm]     = useState(empty);
   const [errors, setErrors] = useState({});
@@ -22,8 +22,9 @@ export default function CreateCourseModal({ onClose }) {
   const handleSubmit = () => {
     const e = validate();
     if (Object.keys(e).length > 0) { setErrors(e); return; }
-    createCourse(form);
-    onClose();
+    const id = createCourse(form);
+    if (onCreated) onCreated(id);
+    else onClose();
   };
 
   const set = (k) => (ev) => {

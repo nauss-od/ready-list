@@ -2,47 +2,6 @@ import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { NaissLogo } from '../components/Layout';
 
-/* ── Geometric 8-pointed star SVG (NAUSS-inspired, decorative) ─── */
-const GeometricStar = ({ size = 260, opacity = 1 }) => (
-  <svg
-    viewBox="0 0 200 200"
-    width={size} height={size}
-    style={{ display: 'block', opacity }}
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    {/* Outer faint ring */}
-    <circle cx="100" cy="100" r="96" stroke="rgba(199,176,140,0.08)" strokeWidth="1"/>
-    <circle cx="100" cy="100" r="82" stroke="rgba(199,176,140,0.1)" strokeWidth="0.8"/>
-
-    {/* 8-pointed star polygon */}
-    <polygon
-      points="100,10 114,65 164,36 135,86 190,100 135,114 164,164 114,135 100,190 86,135 36,164 65,114 10,100 65,86 36,36 86,65"
-      fill="rgba(199,176,140,0.055)"
-      stroke="rgba(199,176,140,0.28)"
-      strokeWidth="1.2"
-      strokeLinejoin="round"
-    />
-
-    {/* Two overlapping squares — inner star frame */}
-    <rect x="58" y="58" width="84" height="84"
-      stroke="rgba(199,176,140,0.18)" strokeWidth="1"
-      transform="rotate(0 100 100)"
-    />
-    <rect x="58" y="58" width="84" height="84"
-      stroke="rgba(199,176,140,0.18)" strokeWidth="1"
-      transform="rotate(45 100 100)"
-    />
-
-    {/* Inner ring */}
-    <circle cx="100" cy="100" r="28" stroke="rgba(199,176,140,0.14)" strokeWidth="1"/>
-
-    {/* Center glow dots */}
-    <circle cx="100" cy="100" r="5" fill="rgba(199,176,140,0.35)"/>
-    <circle cx="100" cy="100" r="2.5" fill="rgba(199,176,140,0.7)"/>
-  </svg>
-);
-
 export default function LoginPage({ onRegister }) {
   const { login } = useApp();
   const [email,    setEmail]    = useState('');
@@ -125,15 +84,23 @@ export default function LoginPage({ onRegister }) {
         {/* Main decorative content */}
         <div style={{ position: 'relative', textAlign: 'center', padding: '0 48px' }}>
 
-          {/* Large geometric star — hero element */}
+          {/* NAUSS logo — white version via CSS filter */}
           <div style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: '32px',
-            filter: 'drop-shadow(0 0 40px rgba(199,176,140,0.12))',
+            marginBottom: '36px',
           }}>
-            <GeometricStar size={240} />
+            <img
+              src="/nauss-logo.png"
+              alt="شعار جامعة نايف العربية للعلوم الأمنية"
+              style={{
+                width: 240,
+                height: 'auto',
+                filter: 'brightness(0) invert(1)',
+                opacity: 0.88,
+              }}
+            />
           </div>
 
           {/* Divider */}

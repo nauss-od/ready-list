@@ -197,6 +197,30 @@ function CourseEditor({ courseId, onBack }) {
         </div>
       )}
 
+      {/* Upload prompt hero — shown when no participants yet */}
+      {showUpload && isEditable && rows.length === 0 && (
+        <div style={{
+          background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+          borderRadius: '14px',
+          padding: '24px 28px',
+          marginBottom: '16px',
+          border: '2px dashed #93c5fd',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '18px',
+        }}>
+          <div style={{ fontSize: '48px', flexShrink: 0 }}>📂</div>
+          <div>
+            <div style={{ fontSize: '17px', fontWeight: '900', color: '#1d4ed8', marginBottom: '4px' }}>
+              الخطوة التالية: ارفع قائمة الأسماء
+            </div>
+            <div style={{ fontSize: '13px', color: '#1d4ed8', opacity: 0.75 }}>
+              ارفع ملف Excel الذي وصلك بالإيميل، أو الصق الأسماء مباشرة من الإيميل
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Upload zone */}
       {showUpload && isEditable && (
         <div style={{ marginBottom: '20px' }}>
@@ -294,19 +318,63 @@ function CourseList({ onSelect, onCreate }) {
 
   return (
     <div className="animate-up">
-      <div className="page-header-row">
-        <div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', color: 'var(--text)' }}>الأنشطة التدريبية</h1>
-          <p style={{ fontSize: '13.5px', color: 'var(--text-light)', marginTop: '3px' }}>
-            اختر النشاط لرفع قائمة الأسماء أو مراجعتها واعتمادها
-          </p>
+
+      {/* ── Hero Create Button ─────────────────────────────────────── */}
+      <div
+        onClick={onCreate}
+        style={{
+          background: 'linear-gradient(135deg, #2A6364 0%, #1a3f40 100%)',
+          borderRadius: '16px',
+          padding: '22px 28px',
+          marginBottom: '28px',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '18px',
+          boxShadow: '0 8px 32px rgba(42,99,100,0.38)',
+          border: '1px solid rgba(199,176,140,0.18)',
+          transition: 'all 0.22s',
+          userSelect: 'none',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(42,99,100,0.50)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+        onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 32px rgba(42,99,100,0.38)'; e.currentTarget.style.transform = 'none'; }}
+      >
+        <div style={{
+          width: 60, height: 60, flexShrink: 0,
+          background: 'rgba(255,255,255,0.14)',
+          borderRadius: '14px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '30px',
+          border: '1px solid rgba(255,255,255,0.12)',
+        }}>📋</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ color: 'white', fontSize: '18px', fontWeight: '900', marginBottom: '4px' }}>
+            إنشاء نشاط تدريبي جديد
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '13px' }}>
+            حدد اسم النشاط والتاريخ، ثم ارفع قائمة الأسماء مباشرة
+          </div>
         </div>
-        <button className="btn btn-primary" onClick={onCreate} style={{ fontSize: '14px', padding: '10px 20px' }}>
-          + نشاط تدريبي جديد
-        </button>
+        <div style={{
+          background: 'rgba(255,255,255,0.16)',
+          borderRadius: '10px',
+          padding: '11px 22px',
+          color: 'white',
+          fontWeight: '900',
+          fontSize: '15px',
+          whiteSpace: 'nowrap',
+          border: '1px solid rgba(255,255,255,0.22)',
+        }}>+ إنشاء</div>
       </div>
 
-      {/* Filter tabs */}
+      {/* ── Filter tabs ───────────────────────────────────────────── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text)' }}>
+          الأنشطة التدريبية
+          <span style={{ fontWeight: '600', color: 'var(--text-muted)', fontSize: '13px', marginRight: '8px' }}>({courses.length})</span>
+        </h2>
+      </div>
+
       <div className="filter-tabs">
         {filters.map(f => (
           <button
@@ -321,18 +389,15 @@ function CourseList({ onSelect, onCreate }) {
       </div>
 
       {visible.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">📋</div>
+        <div className="empty-state" style={{ marginTop: '16px' }}>
+          <div className="empty-icon">{filter === 'all' ? '📋' : '🔍'}</div>
           {filter === 'all' ? (
             <>
               <div className="empty-title">لا توجد أنشطة تدريبية بعد</div>
-              <div className="empty-hint">أنشئ نشاطاً جديداً لبدء العمل</div>
-              <button className="btn btn-primary" onClick={onCreate}>+ إنشاء أول نشاط</button>
+              <div className="empty-hint">انقر على الزر أعلاه لإنشاء أول نشاط</div>
             </>
           ) : (
-            <>
-              <div className="empty-title">لا توجد أنشطة في هذه الفئة</div>
-            </>
+            <div className="empty-title">لا توجد أنشطة في هذه الفئة</div>
           )}
         </div>
       ) : (
@@ -340,11 +405,13 @@ function CourseList({ onSelect, onCreate }) {
           {visible.map(c => {
             const errCnt = (c.participants || []).filter(p => p.errors?.length > 0).length;
             const isEditable = ['pending_upload', 'uploaded', 'has_errors', 'corrected'].includes(c.status);
+            const needsAction = c.status === 'pending_upload' || c.status === 'has_errors';
             return (
               <div
                 key={c.id}
                 className={`course-card ${c.daysLate > 0 ? 'late' : ''}`}
                 onClick={() => onSelect(c.id)}
+                style={needsAction ? { borderRight: '3px solid var(--primary)' } : {}}
               >
                 <div className="course-card-top">
                   <div className="course-code">{c.code}</div>
@@ -366,8 +433,8 @@ function CourseList({ onSelect, onCreate }) {
                       </span>
                     )}
                   </div>
-                  <div className="course-action-link">
-                    {isEditable ? 'فتح للتعديل ←' : 'عرض ←'}
+                  <div className="course-action-link" style={needsAction ? { color: 'var(--primary)', fontWeight: '800' } : {}}>
+                    {c.status === 'pending_upload' ? '📂 ارفع الأسماء ←' : isEditable ? 'فتح للتعديل ←' : 'عرض ←'}
                   </div>
                 </div>
               </div>
@@ -390,7 +457,12 @@ export default function BusinessDevPage() {
 
   return (
     <Layout activeView={view === 'edit' ? 'courses' : view} onNavigate={v => { setView(v); setSelectedId(null); }}>
-      {showCreate && <CreateCourseModal onClose={() => setShowCreate(false)} />}
+      {showCreate && (
+        <CreateCourseModal
+          onClose={() => setShowCreate(false)}
+          onCreated={(id) => { setSelectedId(id); setView('edit'); setShowCreate(false); }}
+        />
+      )}
 
       {view !== 'edit' && (
         <CourseList onSelect={handleSelect} onCreate={() => setShowCreate(true)} />

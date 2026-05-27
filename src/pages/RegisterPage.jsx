@@ -88,23 +88,20 @@ export default function RegisterPage({ onBack }) {
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(199,176,140,0.5), transparent)' }} />
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(199,176,140,0.4), transparent)' }} />
         <div style={{ position: 'relative', textAlign: 'center' }}>
-          {/* Large geometric star — same treatment as LoginPage */}
+          {/* NAUSS logo — white version via CSS filter */}
           <div style={{
-            display: 'flex', justifyContent: 'center', marginBottom: '28px',
-            filter: 'drop-shadow(0 0 32px rgba(199,176,140,0.1))',
+            display: 'flex', justifyContent: 'center', marginBottom: '32px',
           }}>
-            <svg viewBox="0 0 200 200" width={200} height={200} fill="none">
-              <circle cx="100" cy="100" r="96" stroke="rgba(199,176,140,0.08)" strokeWidth="1"/>
-              <circle cx="100" cy="100" r="80" stroke="rgba(199,176,140,0.1)" strokeWidth="0.8"/>
-              <polygon
-                points="100,10 114,65 164,36 135,86 190,100 135,114 164,164 114,135 100,190 86,135 36,164 65,114 10,100 65,86 36,36 86,65"
-                fill="rgba(199,176,140,0.055)" stroke="rgba(199,176,140,0.28)" strokeWidth="1.2" strokeLinejoin="round"
-              />
-              <rect x="60" y="60" width="80" height="80" stroke="rgba(199,176,140,0.16)" strokeWidth="1" transform="rotate(0 100 100)"/>
-              <rect x="60" y="60" width="80" height="80" stroke="rgba(199,176,140,0.16)" strokeWidth="1" transform="rotate(45 100 100)"/>
-              <circle cx="100" cy="100" r="4.5" fill="rgba(199,176,140,0.35)"/>
-              <circle cx="100" cy="100" r="2" fill="rgba(199,176,140,0.7)"/>
-            </svg>
+            <img
+              src="/nauss-logo.png"
+              alt="شعار جامعة نايف العربية للعلوم الأمنية"
+              style={{
+                width: 210,
+                height: 'auto',
+                filter: 'brightness(0) invert(1)',
+                opacity: 0.88,
+              }}
+            />
           </div>
 
           {/* Divider */}

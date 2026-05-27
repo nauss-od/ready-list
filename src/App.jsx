@@ -22,7 +22,7 @@ function Toasts() {
 }
 
 function AppRouter() {
-  const { currentUser } = useApp();
+  const { currentUser, viewRole } = useApp();
   const [showRegister, setShowRegister] = useState(false);
 
   if (!currentUser) {
@@ -30,8 +30,11 @@ function AppRouter() {
     return <LoginPage onRegister={() => setShowRegister(true)} />;
   }
 
-  if (currentUser.role === 'business_dev') return <BusinessDevPage />;
-  if (currentUser.role === 'training_ops') return <TrainingOpsPage />;
+  // Manager can preview other roles via the header switcher
+  const effectiveRole = (currentUser.role === 'manager' && viewRole) ? viewRole : currentUser.role;
+
+  if (effectiveRole === 'business_dev') return <BusinessDevPage />;
+  if (effectiveRole === 'training_ops') return <TrainingOpsPage />;
   return <ManagerPage />;
 }
 

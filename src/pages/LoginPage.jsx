@@ -32,7 +32,7 @@ export default function LoginPage({ onRegister }) {
     border: `1.5px solid ${hasErr ? '#fca5a5' : '#dde4ec'}`,
     borderRadius: '10px',
     fontSize: '14px',
-    fontFamily: 'Cairo, Tahoma, sans-serif',
+    fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
     outline: 'none',
     color: '#0d1a1a',
     background: 'white',
@@ -43,7 +43,7 @@ export default function LoginPage({ onRegister }) {
     <div style={{
       height: '100vh',
       display: 'flex',
-      fontFamily: 'Cairo, Tahoma, sans-serif',
+      fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
       direction: 'rtl',
       overflow: 'hidden',
     }}>
@@ -245,7 +245,7 @@ export default function LoginPage({ onRegister }) {
                 borderRadius: '10px',
                 fontSize: '15px',
                 fontWeight: '800',
-                fontFamily: 'Cairo, Tahoma, sans-serif',
+                fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
                 cursor: loading ? 'default' : 'pointer',
                 transition: 'all 0.22s',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
@@ -281,7 +281,7 @@ export default function LoginPage({ onRegister }) {
               style={{
                 background: 'none', border: 'none',
                 color: '#2A6364', fontSize: '13px', fontWeight: '800',
-                cursor: 'pointer', fontFamily: 'Cairo, Tahoma, sans-serif',
+                cursor: 'pointer', fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
                 textDecoration: 'underline', textUnderlineOffset: '3px', padding: 0,
               }}
             >

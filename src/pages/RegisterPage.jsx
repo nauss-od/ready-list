@@ -45,7 +45,7 @@ export default function RegisterPage({ onBack }) {
     border: `2px solid ${hasErr ? '#fecaca' : '#e2e8f0'}`,
     borderRadius: '10px',
     fontSize: '14px',
-    fontFamily: 'Cairo, Tahoma, sans-serif',
+    fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
     outline: 'none',
     color: '#0f172a',
     transition: 'border-color 0.18s',
@@ -62,7 +62,7 @@ export default function RegisterPage({ onBack }) {
       height: '100vh',
       background: 'linear-gradient(135deg, #0d2626 0%, #1a3f40 50%, #2A6364 100%)',
       display: 'flex',
-      fontFamily: 'Cairo, Tahoma, sans-serif',
+      fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
       direction: 'rtl',
       overflow: 'hidden',
     }}>
@@ -240,7 +240,7 @@ export default function RegisterPage({ onBack }) {
                       cursor: 'pointer',
                       textAlign: 'right',
                       transition: 'all 0.18s',
-                      fontFamily: 'Cairo, Tahoma, sans-serif',
+                      fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
                     }}
                   >
                     <div style={{ fontSize: '13px', fontWeight: '700', color: form.role === r.value ? '#2A6364' : '#1e293b' }}>
@@ -276,7 +276,7 @@ export default function RegisterPage({ onBack }) {
                 borderRadius: '10px',
                 fontSize: '15px',
                 fontWeight: '800',
-                fontFamily: 'Cairo, Tahoma, sans-serif',
+                fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
                 cursor: loading ? 'default' : 'pointer',
                 transition: 'all 0.2s',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
@@ -304,7 +304,7 @@ export default function RegisterPage({ onBack }) {
               style={{
                 background: 'none', border: 'none',
                 color: '#2A6364', fontSize: '13px', fontWeight: '700',
-                cursor: 'pointer', fontFamily: 'Cairo, Tahoma, sans-serif',
+                cursor: 'pointer', fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
                 textDecoration: 'underline', textUnderlineOffset: '3px',
               }}
             >

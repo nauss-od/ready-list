@@ -63,7 +63,7 @@ function RoleSwitcher() {
               borderRadius: '7px',
               border: 'none',
               cursor: 'pointer',
-              fontFamily: 'Cairo, Tahoma, sans-serif',
+              fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
               fontSize: '12px',
               fontWeight: active ? '800' : '600',
               background: active ? 'white' : 'transparent',

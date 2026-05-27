@@ -135,7 +135,7 @@ export default function EditableTable({ rows, onChange, readOnly = false }) {
                               onBlur={() => setActiveCell(null)}
                               placeholder={col.label}
                               style={{
-                                width: '100%', fontFamily: 'Cairo, Tahoma, sans-serif',
+                                width: '100%', fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
                                 direction: 'rtl', fontSize: '13.5px',
                                 padding: '6px 8px',
                                 border: err ? '1.5px solid var(--danger)' : active ? '1.5px solid var(--primary)' : '1.5px solid transparent',

@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
 
+/* ── El Messiri — Primary Arabic font ── */
+@font-face {
+  font-family: 'El Messiri';
+  src: url('/fonts/ElMessiri-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -76,7 +85,7 @@
 ───────────────────────────────────────────────────────────── */
 html { height: 100%; }
 body {
-  font-family: 'Cairo', 'Tahoma', sans-serif;
+  font-family: 'El Messiri', 'Cairo', 'Tahoma', sans-serif;
   direction: rtl;
   background: var(--bg);
   color: var(--text);
@@ -88,7 +97,7 @@ body {
   background-size: 26px 26px;
 }
 #root { height: 100%; }
-input, select, textarea, button { font-family: 'Cairo', 'Tahoma', sans-serif; }
+input, select, textarea, button { font-family: 'El Messiri', 'Cairo', 'Tahoma', sans-serif; }
 input, select, textarea { direction: rtl; text-align: right; }
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }

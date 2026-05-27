@@ -40,7 +40,7 @@ function LMSResultModal({ course, onClose }) {
                   border: `2px solid ${result === o.v ? o.c : 'var(--border)'}`,
                   background: result === o.v ? o.l : 'white',
                   fontSize: '15px', fontWeight: '700', color: result === o.v ? o.c : 'var(--text-light)',
-                  fontFamily: 'Cairo, Tahoma', transition: 'all 0.18s',
+                  fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif', transition: 'all 0.18s',
                 }}>{o.label}</button>
               ))}
             </div>
@@ -418,7 +418,7 @@ function Dashboard({ onNavigate }) {
           {actionItems.length > 4 && (
             <button
               onClick={() => onNavigate('approved')}
-              style={{ marginTop: '12px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '13px', fontFamily: 'Cairo, Tahoma', fontWeight: '700' }}
+              style={{ marginTop: '12px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '13px', fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif', fontWeight: '700' }}
             >
               + {actionItems.length - 4} أخرى — عرض الكل ←
             </button>

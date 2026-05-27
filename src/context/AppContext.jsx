@@ -22,12 +22,68 @@ export const ROLE_LABELS = {
 };
 
 const COL_MAP = {
-  name:         ['الاسم الكامل', 'الاسم', 'اسم', 'اسم المشارك', 'name', 'full name', 'المشترك'],
-  nationalId:   ['رقم الهوية', 'الهوية', 'هوية', 'رقم الهوية الوطنية', 'national id', 'id', 'هوية وطنية'],
-  email:        ['البريد الإلكتروني', 'البريد', 'بريد', 'إيميل', 'ايميل', 'email', 'e-mail'],
-  phone:        ['رقم الجوال', 'الجوال', 'هاتف', 'رقم الهاتف', 'phone', 'mobile', 'موبايل'],
-  organization: ['الجهة', 'جهة العمل', 'جهة', 'المنظمة', 'الشركة', 'organization', 'org', 'company', 'جهة المرسلة'],
-  jobTitle:     ['المسمى الوظيفي', 'المسمى', 'مسمى', 'وظيفة', 'الوظيفة', 'job title', 'title', 'position'],
+  name: [
+    'الاسم الكامل','الاسم','اسم','اسم المشارك','اسم الموظف','اسم العامل',
+    'اسم المتدرب','اسم المرشح','اسم المستفيد','اسم الطالب',
+    'المشترك','المتدرب','المرشح','المشارك',
+    'name','full name','participant name','employee name',
+  ],
+  nationalId: [
+    'رقم الهوية','الهوية','هوية','رقم الهوية الوطنية','الهوية الوطنية',
+    'رقم البطاقة','البطاقة الشخصية','رقم الإقامة','رقم الجواز',
+    'national id','id number','id','iqama','iqama number','passport',
+  ],
+  email: [
+    'البريد الإلكتروني','البريد الالكتروني','البريد','بريد',
+    'الإيميل','ايميل','إيميل',
+    'email','e-mail','email address','mail',
+  ],
+  phone: [
+    'رقم الجوال','الجوال','جوال','هاتف','رقم الهاتف','رقم الموبايل',
+    'موبايل','رقم التواصل',
+    'phone','mobile','phone number','mobile number','tel',
+  ],
+  organization: [
+    'الجهة','جهة العمل','جهة','المنظمة','الشركة','المؤسسة','جهة المرسلة',
+    'الوزارة','الإدارة','القطاع',
+    'organization','org','company','ministry','department','employer',
+  ],
+  jobTitle: [
+    'المسمى الوظيفي','المسمى','مسمى','وظيفة','الوظيفة','الرتبة','المنصب',
+    'job title','title','position','designation','rank',
+  ],
+};
+
+/* Columns to ignore (sequential row numbers) */
+const IGNORE_COL_PATTERNS_CTX = ['م','#','رقم','no','row','seq','رقم م','رقم التسلسل','ت','رقم ت'];
+
+/* Keywords that indicate a row is likely a header row */
+const HEADER_KEYWORDS_CTX = [
+  'اسم','هوية','جوال','هاتف','بريد','إيميل','ايميل','الإيميل',
+  'جهة','مسمى','وظيف','موبايل','مشارك','موظف','مرشح','متدرب','مستفيد',
+  'email','phone','name','id','organization','title','mobile',
+];
+
+const headerRowScore_ctx = (row) => {
+  if (!row) return 0;
+  let score = 0;
+  for (const cell of row) {
+    const s = String(cell ?? '').trim().toLowerCase();
+    if (!s) continue;
+    for (const kw of HEADER_KEYWORDS_CTX) {
+      if (s.includes(kw)) { score += 1; break; }
+    }
+  }
+  return score;
+};
+
+const findHeaderRow_ctx = (rows, maxScan = 12) => {
+  let bestIdx = -1, bestScore = 0;
+  for (let i = 0; i < Math.min(rows.length, maxScan); i++) {
+    const score = headerRowScore_ctx(rows[i]);
+    if (score > bestScore) { bestScore = score; bestIdx = i; }
+  }
+  return bestScore >= 1 ? bestIdx : -1;
 };
 
 const findCol = (headers, keys) => {
@@ -38,27 +94,48 @@ const findCol = (headers, keys) => {
   return -1;
 };
 
+const cleanNameCtx = (raw) =>
+  String(raw ?? '').trim().replace(/^[\d٠-٩]+[\.\-\)]\s*/, '').replace(/\s+/g, ' ').trim();
+
 export const mapExcelRows = (rows) => {
-  if (!rows || rows.length < 2) return { participants: [], mapping: {}, headers: [] };
-  const headers = rows[0].map(h => String(h ?? '').trim());
+  if (!rows || rows.length < 1) return { participants: [], mapping: {}, headers: [] };
+
+  const headerIdx = findHeaderRow_ctx(rows);
+  const headers = headerIdx >= 0 ? rows[headerIdx].map(h => String(h ?? '').trim()) : [];
+  const dataRows = headerIdx >= 0
+    ? rows.slice(headerIdx + 1).filter(row => row && row.some(c => c !== undefined && String(c) !== ''))
+    : rows.filter(row => row && row.some(c => c !== undefined && String(c) !== ''));
+
   const mapping = {};
-  for (const [field, keys] of Object.entries(COL_MAP)) {
-    mapping[field] = findCol(headers, keys);
+  if (headers.length > 0) {
+    for (const [field, keys] of Object.entries(COL_MAP)) {
+      const rawIdx = findCol(headers, keys);
+      const isIgnore = rawIdx >= 0 && IGNORE_COL_PATTERNS_CTX.some(
+        p => String(headers[rawIdx] ?? '').trim().toLowerCase() === p.toLowerCase()
+      );
+      mapping[field] = isIgnore ? -1 : rawIdx;
+    }
+  } else {
+    // No header detected — use positional fallback
+    Object.assign(mapping, { name: 0, nationalId: 1, email: 2, phone: 3, organization: 4, jobTitle: 5 });
   }
-  const participants = rows.slice(1)
-    .filter(row => row && row.some(c => c !== undefined && String(c) !== ''))
-    .map((row, i) => {
-      const get = (field) => mapping[field] >= 0 ? String(row[mapping[field]] ?? '').trim() : '';
-      const p = {
-        id: `P_${Date.now()}_${i}`,
-        name: get('name'), nationalId: get('nationalId'),
-        email: get('email'), phone: get('phone'),
-        organization: get('organization'), jobTitle: get('jobTitle'),
-        errors: [], corrected: false, isDuplicate: false,
-      };
-      p.errors = validateParticipant(p);
-      return p;
-    });
+
+  const participants = dataRows.map((row, i) => {
+    const get = (field) => mapping[field] >= 0 ? String(row[mapping[field]] ?? '').trim() : '';
+    const p = {
+      id: `P_${Date.now()}_${i}`,
+      name: cleanNameCtx(get('name')),
+      nationalId: get('nationalId').replace(/\s/g, ''),
+      email: get('email').toLowerCase().trim(),
+      phone: get('phone').replace(/[\s\-]/g, ''),
+      organization: get('organization'),
+      jobTitle: get('jobTitle'),
+      errors: [], corrected: false, isDuplicate: false,
+    };
+    p.errors = validateParticipant(p);
+    return p;
+  }).filter(p => p.name || p.email || p.nationalId);
+
   const seen = {};
   participants.forEach(p => { if (p.nationalId) seen[p.nationalId] = (seen[p.nationalId] || 0) + 1; });
   participants.forEach(p => {

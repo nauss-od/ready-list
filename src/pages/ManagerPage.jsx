@@ -342,7 +342,7 @@ function UserModal({ title, user, onClose, onSubmit, isEdit }) {
     width: '100%', boxSizing: 'border-box', padding: '10px 13px',
     border: `1.5px solid ${hasErr ? '#fca5a5' : 'var(--border)'}`,
     borderRadius: '9px', fontSize: '13.5px',
-    fontFamily: 'Cairo, Tahoma, sans-serif', outline: 'none',
+    fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif', outline: 'none',
     color: 'var(--text)', transition: 'border-color 0.18s',
   });
 
@@ -409,7 +409,7 @@ function UserModal({ title, user, onClose, onSubmit, isEdit }) {
                           background: form.role === r.value ? 'rgba(42,99,100,0.07)' : 'white',
                           cursor: 'pointer', fontSize: '13px', fontWeight: '700',
                           color: form.role === r.value ? 'var(--primary)' : 'var(--text-light)',
-                          fontFamily: 'Cairo, Tahoma, sans-serif', transition: 'all 0.18s',
+                          fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif', transition: 'all 0.18s',
                         }}>
                   {r.label}
                 </button>
@@ -515,7 +515,7 @@ function UsersManagement() {
                             borderRadius: '7px', color: '#b91c1c',
                             fontSize: '12px', fontWeight: '600',
                             padding: '5px 10px', cursor: 'pointer',
-                            fontFamily: 'Cairo, Tahoma, sans-serif',
+                            fontFamily: 'El Messiri, Cairo, Tahoma, sans-serif',
                             transition: 'all 0.15s',
                           }}
                           onMouseEnter={e => { e.currentTarget.style.background = '#fef2f2'; }}

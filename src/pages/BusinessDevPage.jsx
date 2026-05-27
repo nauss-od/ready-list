@@ -121,6 +121,7 @@ function CourseEditor({ courseId, onBack }) {
   const [showUpload,  setShowUpload]  = useState(!course?.participants?.length);
   const [showApprove, setShowApprove] = useState(false);
   const [saved,       setSaved]       = useState(true);
+  const [confirmClear, setConfirmClear] = useState(false);
 
   if (!course) return null;
 
@@ -139,12 +140,20 @@ function CourseEditor({ courseId, onBack }) {
     }, 900);
   };
 
-  const handleImport = (participants) => {
-    const merged = [...rows, ...participants];
-    setRows(merged);
+  const handleImport = (participants, mode = 'add') => {
+    const finalList = mode === 'replace' ? participants : [...rows, ...participants];
+    setRows(finalList);
     setShowUpload(false);
-    uploadParticipants(course.id, merged, 'ملف مستورد');
+    uploadParticipants(course.id, finalList, 'ملف مستورد');
     setSaved(true);
+  };
+
+  const handleClearAll = () => {
+    setRows([]);
+    setConfirmClear(false);
+    uploadParticipants(course.id, [], 'مسح القائمة');
+    setSaved(true);
+    setShowUpload(true);
   };
 
   return (
@@ -227,6 +236,7 @@ function CourseEditor({ courseId, onBack }) {
           <UploadPasteZone
             onData={handleImport}
             onCancel={rows.length > 0 ? () => setShowUpload(false) : null}
+            existingCount={rows.length}
           />
         </div>
       )}
@@ -245,9 +255,31 @@ function CourseEditor({ courseId, onBack }) {
               )}
             </h3>
             {isEditable && (
-              <button className="btn btn-ghost btn-sm" onClick={() => setShowUpload(!showUpload)}>
-                {showUpload ? 'إخفاء' : '📎 استيراد / إضافة'}
-              </button>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <button className="btn btn-ghost btn-sm" onClick={() => { setShowUpload(!showUpload); setConfirmClear(false); }}>
+                  {showUpload ? 'إخفاء' : '📎 استيراد / إضافة'}
+                </button>
+                {rows.length > 0 && !confirmClear && (
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setConfirmClear(true)}
+                    style={{ color: '#dc2626', borderColor: '#fca5a5' }}
+                  >
+                    🗑 مسح القائمة
+                  </button>
+                )}
+                {confirmClear && (
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center', background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '8px', padding: '4px 10px' }}>
+                    <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: '700' }}>حذف {rows.length} مشارك؟</span>
+                    <button
+                      className="btn btn-ghost btn-sm"
+                      onClick={handleClearAll}
+                      style={{ background: '#dc2626', color: 'white', border: 'none', padding: '3px 10px' }}
+                    >نعم، امسح</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setConfirmClear(false)} style={{ padding: '3px 8px' }}>إلغاء</button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
           <div className="card-body" style={{ padding: '0' }}>

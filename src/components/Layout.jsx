@@ -21,10 +21,11 @@ const NAV = {
     { id: 'history',   icon: '⏳', label: 'سجل التصدير' },
   ],
   manager: [
-    { id: 'dashboard', icon: '◫', label: 'لوحة المؤشرات' },
-    { id: 'courses',   icon: '◈', label: 'جميع الأنشطة' },
-    { id: 'quality',   icon: '◎', label: 'جودة البيانات' },
-    { id: 'users',     icon: '◉', label: 'المستخدمون' },
+    { id: 'dashboard',  icon: '◫', label: 'لوحة المؤشرات' },
+    { id: 'courses',    icon: '◈', label: 'جميع الأنشطة' },
+    { id: 'quality',    icon: '◎', label: 'جودة البيانات' },
+    { id: 'analytics',  icon: '◑', label: 'الرصد التشغيلي' },
+    { id: 'users',      icon: '◉', label: 'المستخدمون' },
   ],
 };
 

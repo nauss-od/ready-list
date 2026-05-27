@@ -167,6 +167,48 @@ function CourseReview({ course, onBack }) {
         </div>
       </div>
 
+      {/* ── Incomplete data warning ── */}
+      {course.isIncomplete && course.completenessReport && (
+        <div style={{
+          marginBottom: '16px',
+          padding: '16px 18px',
+          background: 'linear-gradient(135deg, #fffbeb, #fef3c7)',
+          border: '2px solid #fcd34d',
+          borderRadius: '12px',
+          display: 'flex', gap: '14px', alignItems: 'flex-start',
+        }}>
+          <span style={{ fontSize: '24px', flexShrink: 0 }}>⚠</span>
+          <div>
+            <div style={{ fontWeight: '900', color: '#92400e', fontSize: '15px', marginBottom: '6px' }}>
+              تنبيه: هذه القائمة اعتُمدت ببيانات ناقصة — اكتمال {course.completenessReport.completenessScore}%
+            </div>
+            <div style={{ fontSize: '13px', color: '#78350f', marginBottom: '10px' }}>
+              الحقول التالية لم تكن موجودة في الملف الأصلي المُرسَل من العميل:
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              {Object.entries(course.completenessReport.missing || {})
+                .filter(([, v]) => v > 0)
+                .map(([key, count]) => {
+                  const labels = { phone: 'رقم الجوال', nationalId: 'رقم الهوية', organization: 'الجهة', email: 'البريد', jobTitle: 'المسمى', name: 'الاسم' };
+                  return (
+                    <span key={key} style={{
+                      padding: '3px 10px', borderRadius: '20px',
+                      background: 'rgba(217,119,6,0.1)', color: '#b45309',
+                      border: '1px solid rgba(217,119,6,0.3)', fontSize: '12.5px', fontWeight: '700',
+                    }}>
+                      {labels[key]}: {count} مشارك
+                    </span>
+                  );
+                })
+              }
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '12px', color: '#92400e' }}>
+              📋 يُوصى بالتواصل مع تطوير الأعمال لاستكمال البيانات الناقصة قبل الرفع على LMS
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Actions */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
         {course.status === 'approved' && (

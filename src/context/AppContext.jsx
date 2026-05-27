@@ -147,6 +147,24 @@ export const mapExcelRows = (rows) => {
   return { participants, mapping, headers };
 };
 
+/* ── Completeness analysis ───────────────────────────────────────────────────── */
+export const calculateCompleteness = (participants) => {
+  if (!participants || participants.length === 0) return null;
+  const total = participants.length;
+  const miss = {
+    name:         participants.filter(p => !p.name?.trim()).length,
+    email:        participants.filter(p => !p.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)).length,
+    phone:        participants.filter(p => !p.phone || !/^05\d{8}$/.test(p.phone.replace(/[\s\-]/g,''))).length,
+    nationalId:   participants.filter(p => !p.nationalId || !/^\d{10}$/.test(p.nationalId.replace(/\s/g,''))).length,
+    organization: participants.filter(p => !p.organization?.trim()).length,
+    jobTitle:     participants.filter(p => !p.jobTitle?.trim()).length,
+  };
+  const completeCount = participants.filter(p => !p.errors || p.errors.length === 0).length;
+  const completenessScore = Math.round((completeCount / total) * 100);
+  const hasWarning = miss.phone > 0 || miss.nationalId > 0 || miss.organization > 0 || miss.email > 0;
+  return { total, completeCount, completenessScore, missing: miss, hasWarning, generatedAt: new Date().toISOString() };
+};
+
 export function AppProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
@@ -367,14 +385,27 @@ export function AppProvider({ children }) {
     showToast(`تمت إضافة ${newParticipants.length} مشارك`, 'success');
   }, [showToast]);
 
-  const approveCourse = useCallback((courseId) => {
+  const approveCourse = useCallback((courseId, completenessReport = null) => {
+    const isIncomplete = completenessReport?.hasWarning;
     setCourses(prev => prev.map(c =>
       c.id !== courseId ? c : {
         ...c, status: 'approved', approvedAt: new Date().toISOString(),
-        auditLog: [...(c.auditLog || []), { action: 'اعتماد القائمة رسمياً وإحالتها لعمليات التدريب', at: new Date().toISOString() }],
+        completenessReport,
+        isIncomplete: isIncomplete || false,
+        auditLog: [...(c.auditLog || []), {
+          action: isIncomplete
+            ? `اعتماد القائمة مع تحفظ (بيانات ناقصة — اكتمال ${completenessReport?.completenessScore ?? 0}%) وإحالتها لعمليات التدريب`
+            : 'اعتماد القائمة رسمياً وإحالتها لعمليات التدريب',
+          at: new Date().toISOString(),
+        }],
       }
     ));
-    showToast('اعتُمدت القائمة وأُحيلت إلى عمليات التدريب ✅', 'success');
+    showToast(
+      isIncomplete
+        ? `اعتُمدت القائمة مع تحفظ (اكتمال ${completenessReport?.completenessScore ?? 0}%) — عمليات التدريب ستُنبَّه ⚠`
+        : 'اعتُمدت القائمة وأُحيلت إلى عمليات التدريب ✅',
+      'success'
+    );
   }, [showToast]);
 
   const receiveCourse = useCallback((courseId) => {

@@ -3,8 +3,11 @@ import Layout from '../components/Layout';
 import EditableTable, { countErrors } from '../components/EditableTable';
 import UploadPasteZone from '../components/UploadPasteZone';
 import CreateCourseModal from '../components/CreateCourseModal';
-import { useApp } from '../context/AppContext';
+import { useApp, calculateCompleteness } from '../context/AppContext';
 import { statusConfig } from '../data/mockData';
+
+/* Hard errors that block approval — soft warnings (missing phone/ID/org) do NOT block */
+const HARD_ERRORS = ['missing_name', 'duplicate'];
 
 const fmtD = (iso) => iso ? new Date(iso).toLocaleDateString('ar-SA') : '—';
 
@@ -53,6 +56,15 @@ function WorkflowBar({ status }) {
 /* ── Approve modal ──────────────────────────────────────────────────────────── */
 function ApproveModal({ course, onClose }) {
   const { approveCourse } = useApp();
+  const report = calculateCompleteness(course.participants);
+  const isIncomplete = report?.hasWarning;
+
+  const FIELD_LABELS_AR = {
+    name: 'الاسم', email: 'البريد الإلكتروني',
+    phone: 'رقم الجوال', nationalId: 'رقم الهوية',
+    organization: 'الجهة', jobTitle: 'المسمى الوظيفي',
+  };
+
   return (
     <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal">
@@ -61,24 +73,74 @@ function ApproveModal({ course, onClose }) {
           <button className="close-btn" onClick={onClose}>✕</button>
         </div>
         <div className="modal-body">
-          <div className="alert alert-warning">
-            <span style={{ fontSize: 18 }}>⚠</span>
-            <div>بعد الاعتماد، تُحال القائمة إلى إدارة عمليات التدريب ولا يمكن تعديلها.</div>
-          </div>
-          <div style={{ marginTop: '16px', padding: '16px', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+
+          {/* Completeness warning if applicable */}
+          {isIncomplete && (
+            <div style={{
+              background: 'linear-gradient(135deg, #fffbeb, #fef3c7)',
+              border: '1.5px solid #fcd34d',
+              borderRadius: '12px', padding: '14px 16px', marginBottom: '16px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <span style={{ fontSize: 20 }}>⚠</span>
+                <div style={{ fontWeight: '800', color: '#92400e', fontSize: '14px' }}>
+                  القائمة تحتوي بيانات ناقصة — الاكتمال {report.completenessScore}%
+                </div>
+              </div>
+              <div style={{ fontSize: '12.5px', color: '#78350f', marginBottom: '8px' }}>
+                الحقول المفقودة في هذا الملف (جاءت من العميل بدونها):
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {Object.entries(report.missing).filter(([, v]) => v > 0).map(([key, count]) => (
+                  <span key={key} style={{
+                    padding: '3px 10px', borderRadius: '20px',
+                    background: 'rgba(217,119,6,0.12)', color: '#b45309',
+                    border: '1px solid rgba(217,119,6,0.3)',
+                    fontSize: '12px', fontWeight: '700',
+                  }}>
+                    {FIELD_LABELS_AR[key]}: {count} مشارك
+                  </span>
+                ))}
+              </div>
+              <div style={{ marginTop: '10px', fontSize: '12px', color: '#92400e', fontWeight: '600' }}>
+                ✓ يمكن الاعتماد — ستُنبَّه عمليات التدريب بنقص البيانات ويُسجَّل ذلك في التقارير التشغيلية
+              </div>
+            </div>
+          )}
+
+          {/* Summary */}
+          <div style={{ padding: '16px', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
             <div style={{ fontWeight: '800', marginBottom: '10px', fontSize: '14px' }}>ملخص ما سيُرسل:</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13.5px' }}>
               <div>📋 <strong>النشاط:</strong> {course.name}</div>
               <div>📅 <strong>التاريخ:</strong> {fmtD(course.startDate)}</div>
               <div>📍 <strong>المقر:</strong> {course.location}</div>
               <div>👥 <strong>عدد المشاركين:</strong> {course.participants.length} مشارك</div>
+              {report && (
+                <div>
+                  📊 <strong>اكتمال البيانات:</strong>{' '}
+                  <span style={{ color: report.completenessScore >= 80 ? '#059669' : report.completenessScore >= 50 ? '#d97706' : '#dc2626', fontWeight: '800' }}>
+                    {report.completenessScore}% ({report.completeCount} مكتمل من {report.total})
+                  </span>
+                </div>
+              )}
               {course.nominationLetter && <div>📄 <strong>خطاب الترشيح:</strong> {course.nominationLetter}</div>}
             </div>
           </div>
+
+          {!isIncomplete && (
+            <div className="alert alert-warning" style={{ marginTop: '14px' }}>
+              <span style={{ fontSize: 18 }}>⚠</span>
+              <div>بعد الاعتماد، تُحال القائمة إلى إدارة عمليات التدريب ولا يمكن تعديلها.</div>
+            </div>
+          )}
         </div>
         <div className="modal-footer">
-          <button className="btn btn-success" onClick={() => { approveCourse(course.id); onClose(); }}>
-            ✅ اعتماد وإحالة لعمليات التدريب
+          <button
+            className="btn btn-success"
+            onClick={() => { approveCourse(course.id, report); onClose(); }}
+          >
+            {isIncomplete ? '⚠ اعتماد مع تحفظ (بيانات ناقصة)' : '✅ اعتماد وإحالة لعمليات التدريب'}
           </button>
           <button className="btn btn-ghost" onClick={onClose}>إلغاء</button>
         </div>
@@ -128,7 +190,9 @@ function CourseEditor({ courseId, onBack }) {
   const isEditable = ['pending_upload', 'uploaded', 'has_errors', 'corrected'].includes(course.status);
   const isApproved = ['approved', 'received', 'exported', 'lms_uploaded'].includes(course.status);
   const errCount   = countErrors(rows);
-  const canApprove = rows.length > 0 && errCount === 0 && isEditable;
+  // Only hard errors (missing name, duplicate) block approval — soft warnings (phone/ID/org) do not
+  const hardErrCount = rows.filter(p => p.errors?.some(e => HARD_ERRORS.includes(e))).length;
+  const canApprove = rows.length > 0 && hardErrCount === 0 && isEditable;
 
   const handleRowsChange = (newRows) => {
     setRows(newRows);
@@ -303,17 +367,22 @@ function CourseEditor({ courseId, onBack }) {
 
       {/* Approve button */}
       {isEditable && rows.length > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px', marginTop: '18px' }}>
-          {errCount > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px', marginTop: '18px', flexWrap: 'wrap' }}>
+          {hardErrCount > 0 && (
             <span style={{ fontSize: '13px', color: 'var(--danger)', fontWeight: '600' }}>
-              ⚠ {errCount} سطر بأخطاء — صحّح البيانات أولاً
+              ✕ {hardErrCount} سطر بأسماء مفقودة أو مكررة — يجب تصحيحها أولاً
+            </span>
+          )}
+          {hardErrCount === 0 && errCount > 0 && (
+            <span style={{ fontSize: '13px', color: '#d97706', fontWeight: '600' }}>
+              ⚠ {errCount} سطر ببيانات ناقصة — يمكن الاعتماد مع تسجيل التحفظ
             </span>
           )}
           <button
             className="btn btn-success"
             disabled={!canApprove}
             onClick={() => setShowApprove(true)}
-            style={{ fontSize: '14px', padding: '10px 22px' }}
+            style={{ fontSize: '14px', padding: '10px 22px', opacity: canApprove ? 1 : 0.5 }}
           >
             ✅ اعتماد وإحالة لعمليات التدريب
           </button>

@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import CreateCourseModal from '../components/CreateCourseModal';
 import { useApp, ROLE_LABELS } from '../context/AppContext';
 import { statusConfig } from '../data/mockData';
+import ManagerAnalyticsPage from './ManagerAnalyticsPage';
 
 const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString('ar-SA') : '—';
 const fmtDT   = (iso) => iso ? new Date(iso).toLocaleString('ar-SA') : '—';
@@ -620,10 +621,11 @@ export default function ManagerPage() {
       }
     >
       {showCreate && <CreateCourseModal onClose={() => setShowCreate(false)} />}
-      {view === 'dashboard' && <KPIDashboard />}
-      {view === 'courses'   && <AllCourses onCreateCourse={() => setShowCreate(true)} />}
-      {view === 'quality'   && <DataQuality />}
-      {view === 'users'     && <UsersManagement />}
+      {view === 'dashboard'  && <KPIDashboard />}
+      {view === 'courses'    && <AllCourses onCreateCourse={() => setShowCreate(true)} />}
+      {view === 'quality'    && <DataQuality />}
+      {view === 'analytics'  && <ManagerAnalyticsPage />}
+      {view === 'users'      && <UsersManagement />}
     </Layout>
   );
 }
